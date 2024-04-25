@@ -1,18 +1,17 @@
 import streamlit as st
-from pages import restaurantes, usuarios
 
-PAGES = {
-    "usuarios": usuarios,
-    "restaurante": restaurantes
-}
+st.title('O menu')
 
+st.subheader('Login:')
+email = st.text_input('email:')
+senha = st.text_input('Senha: ', type='password')
 
-def main():
-    st.sidebar.title("Navegação")
-    selection = st.sidebar.radio("Escolha uma página:", list(PAGES.keys()))
+col1, col2 = st.columns([1, 0.2])
+with col1:
+    if st.button('entrar'):
+        #logica hash
+        pass
 
-    page = PAGES[selection]
-    page.app()
-
-if __name__ == "__main__":
-    main()
+with col2:
+    if st.button('Cadastrar'):
+        st.switch_page('pages/cadastro.py')
