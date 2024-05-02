@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_folium import st_folium
 import folium
+import requests
 
 m = folium.Map(location=[39.431, -75], zoom_start=16)
 folium.Marker(
@@ -11,6 +12,11 @@ folium.Marker(
 
 
 st.title('O MENU')
+
+st.session_state.id = st.text_input('Digite o id do restaurante que deseja: ')
+
+if st.button('buscar'):
+    st.switch_page('pages/restaurante.py')
 
 st_data = st_folium(m, width=725)
 
