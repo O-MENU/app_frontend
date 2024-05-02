@@ -3,6 +3,7 @@ from streamlit_folium import st_folium
 from streamlit_geolocation import streamlit_geolocation
 import folium
 import requests
+from st_pages import hide_pages
 
 if 'center' not in st.session_state:
     st.session_state['center'] = [-23.588609, -46.681847]
