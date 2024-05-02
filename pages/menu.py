@@ -19,14 +19,16 @@ with st.form('get_loc'):
 
 loc = streamlit_geolocation()
 if sub:
-    st.session_state['center'] = requests.get(f'http://127.0.0.1:5000/get_loc/{end} {cidade} {cep}').json()['resp']
-    loc = [None]
     st.session_state['buscando_loc'] = True
-elif not st.session_state['buscando_loc']:
+    st.session_state['center'] = requests.get(f'http://127.0.0.1:5000/get_loc/{end} {cidade} {cep}').json()['resp']
+    loc = {'latitude' : None}
+elif not st.session_state['buscando_loc'] and loc['latitude'] != None:
     st.session_state['center'] = [loc['latitude'], loc['longitude']]
 
-if None not in loc:
+if loc['latitude'] != None:
     st.session_state['buscando_loc'] = False
+
+st.session_state['buscando_loc']
 
 m = folium.Map(location=st.session_state['center'], zoom_start=st.session_state['zoom'])
 
