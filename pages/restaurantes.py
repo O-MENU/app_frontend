@@ -22,7 +22,7 @@ with col2:
         st.switch_page("pages/novo_restaurante.py")
             
 
-    # V  Definir filtros pelo usuário  V
+# V  Definir filtros pelo usuário  V
 st.write("")
 st.subheader("Filtrar por:")
 

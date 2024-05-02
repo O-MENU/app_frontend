@@ -40,6 +40,11 @@ folium.Marker(
 
 st.title('O MENU')
 
+st.session_state.id = st.text_input('Digite o id do restaurante que deseja: ')
+
+if st.button('buscar'):
+    st.switch_page('pages/restaurante.py')
+
 st_data = st_folium(m, width=725)
 
 col1, col2 = st.columns([1, 0.25])
