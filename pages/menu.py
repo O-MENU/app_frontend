@@ -38,7 +38,13 @@ folium.Marker(
     tooltip='Liberty Bell'
 ).add_to(m)
 
-st.title('O MENU')
+col1, col2 = st.columns([1, 1])
+
+col1 = st.title('O MENU')
+with col2:
+    if st.button('Meu usuário'):
+        st.switch_page('pages/usuario.py')
+
 
 st.session_state.id = st.text_input('Digite o id do restaurante que deseja: ')
 

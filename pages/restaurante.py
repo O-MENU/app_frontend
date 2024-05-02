@@ -44,8 +44,16 @@ if "id" in st.session_state:
                 selected_motivos[motivo] = st.checkbox(motivo, key=motivo)
             st.session_state.comentario = st.text_area(label='Comentários', placeholder='Lugar agradável...')
             if st.button('Enviar Avaliação', key='submit_rating'):
-                pass
-
+                av = {
+                    'nota': st.session_state.stars,
+                    'pontos_fortes': [motivo for motivo in selected_motivos if selected_motivos[motivo]],
+                    'comentario': st.session_state.comentario
+                }
+                avaliacao = requests.post(f'http://127.0.0.1:5000/avaliacoes/usuarios/1/restaurantes/6', json=av)
+                if avaliacao.status_code == 201 or avaliacao.status_code == 200 or avaliacao.status_code == 204 or avaliacao.status_code == 202 or avaliacao.status_code == 203:
+                    st.success('Avaliação enviada com sucesso!')
+                else:
+                    st.error(f'{avaliacao}')
 
     else:
         st.error('Falha ao obter dados do restaurante. Status code: {}'.format(dados.status_code))
