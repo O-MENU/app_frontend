@@ -2,83 +2,55 @@ import streamlit as st
 import pandas as pd
 import requests
 
-url = "URL AQUI"
+url = "localhost"
 
 try:
-    users = requests.get(url).json()
-except:
-    #st.error("Erro na requisição dos usuários") # <--- !!!!!   DESCOMENTAR AO OBTER URL   !!!!!
-    users = []
+    response = requests.get(f'{url}/restaurantes')
+    data = response.json()['restaurantes']
+except Exception as e:
+    st.error(f"Error fetching data: {str(e)}")
+    data = []
 
-# V  Header  V
-col1, col2 = st.columns(2)
-col1.title("Restaurantes") # Título da página
-with col2:
-    st.write("")
-    st.write("")
-    if st.button("Adicionar novo"):
-        st.switch_page("pages/novo_restaurante.py")
-            
+df_restaurants = pd.DataFrame(data)
 
-    # V  Definir filtros pelo usuário  V
-st.write("")
+col1, col2 = st.columns([3, 1])
+col1.title("Restaurantes")
+
+if col2.button("Adicionar novo"):
+    st.session_state['page'] = 'new_restaurant'
+    st.experimental_rerun()
+
 st.subheader("Filtrar por:")
+options = ["Nome", "Localização", "CNPJ", "Menu"]
+db_options = ["nome", "localizacao", "cnpj", "cardapio"]
 
-op_filtro = ["ID", "Nome", "Localização", "CNPJ", "Menu"] # Opções de filtro
-db_op_filtro = ["_id", "Nome", "Localização", "CNPJ", "Menu"] # Opções de filtro como estão na base de dados
+selected_filter = st.selectbox("Escolha o filtro", options)
+filter_input = st.text_input("Valor do filtro", "")
 
-id_inicial = 0 # Index da opção inicial
-
-    # V  Filtro  V
-filtro = st.radio("filtros", op_filtro, index=id_inicial, label_visibility="collapsed")
-txt_filtro = st.text_input("txt filtro", placeholder=f"Filtrando por {filtro}", label_visibility="collapsed")
-
-df_users = pd.DataFrame(users) # DataFrame de usuários
-filtered_df_users = [col for col in df_users if col[db_op_filtro[op_filtro.index(filtro)]] == txt_filtro or not filtro] # Filtra o DataFrame de acordo com o filtro passado
-
-st.write("")
-st.write("")
-
-    # V   exibir dataframe com botoes   V
-
-if len(filtered_df_users) > 0:
-    format_cols = (0.5,1,2,1,2,1,1) # Tamanho de cada coluna + botao de editar + botao de apagar
-    cols = st.columns(format_cols)
-    fields = ["ID", "Nome", "Localização", "CNPJ", "Menu", "Editar", "Apagar"] # Colunas + botao de editar + botao de apagar
-
-    for col, field_name in zip(cols, fields): # Escreve o título da coluna
-        col.write(field_name)
-
-    for i, id in enumerate(filtered_df_users["_id"]):
-        col1, col2, col3, col4, col5, col6, col7 = st.columns(format_cols) # Número de fields
-
-        col1.write(str(id))#                        }
-        col2.write(filtered_df_users["nome"][i])#    }
-        col3.write(filtered_df_users["localização"][i])#    }   Colunas do DataFrame
-        col4.write(filtered_df_users["CNPJ"][i])#    }
-        col5.write(filtered_df_users["menu"][i])#    }
-
-        button1_phold = col6.empty() #                           }
-        update = button1_phold.button("Editar", key=f"{i}b")#     }  Botão de editar
-
-        button2_phold = col7.empty()#                            } 
-        delete = button2_phold.button("Apagar", key=f"{i}c")#     }  Botão de deletar
-
-        if update:  # Lógica do botão de editar
-            st.session_state.user_id = id
-            st.switch_page('edita restaurante')
-
-        if delete:  # Lógica do botão de deletar
-            try:
-                # requests.delete(f"{url}/{id}")
-                pass
-            except:
-                st.error("Erro ao apagar restaurante")
-            else:
-                st.success("Restaurante removido com sucesso")
+if filter_input:
+    filtered_data = df_restaurants[df_restaurants[db_options[options.index(selected_filter)]].astype(str).str.contains(filter_input, case=False)]
 else:
-    st.warning("Nenhum restaurante encontrado com estes filtros")
+    filtered_data = df_restaurants
 
+if not filtered_data.empty:
+    st.dataframe(filtered_data[['nome', 'localizacao', 'cnpj']])
 
-
-
+    if filter_input:
+        for idx, row in filtered_data.iterrows():
+            col1, col2 = st.columns([1, 1], gap="small")
+            if col1.button(f"Editar", key=f"edit_{row['_id']}"):
+                st.session_state['edit_id'] = row['_id']
+                st.session_state['page'] = 'edit_restaurant'
+                st.experimental_rerun()
+            if col2.button(f"Apagar", key=f"delete_{row['_id']}"):
+                try:
+                    delete_response = requests.delete(f"{url}/restaurantes/{row['_id']}")
+                    if delete_response.status_code == 200:
+                        st.success("Restaurante removido com sucesso")
+                        st.experimental_rerun()
+                    else:
+                        st.error("Falha ao remover restaurante")
+                except Exception as e:
+                    st.error(f"Erro ao conectar: {str(e)}")
+else:
+    st.warning("Nenhum restaurante encontrado com esses filtros")

@@ -13,6 +13,9 @@ def location(loc):
     st.session_state.center = (loc["latitude"], loc['longitude'])
     return (loc["latitude"], loc['longitude'])
 
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 if 'center' not in st.session_state:
     st.session_state['center'] = [-23.588609, -46.681847]
 if 'zoom' not in st.session_state:
