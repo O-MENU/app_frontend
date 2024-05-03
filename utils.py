@@ -2,6 +2,10 @@ from streamlit_js_eval import get_geolocation
 import asyncio
 import streamlit as st
 
+def location(loc):
+    st.session_state.center = (loc["latitude"], loc['longitude'])
+    return (loc["latitude"], loc['longitude'])
+
 async def get_location():
     loc = get_geolocation()
     timer = 60
@@ -11,4 +15,5 @@ async def get_location():
         timer -= 1
     
     if loc is not None:
-        st.session_state.coords = loc['center']
+        st.session_state.loc_atual = True
+        st.session_state.center = (loc['coords']['latitude'], loc['coords']['longitude'])
