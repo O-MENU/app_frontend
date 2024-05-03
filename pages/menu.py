@@ -4,6 +4,9 @@ from streamlit_geolocation import streamlit_geolocation
 import folium
 import requests
 
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 if 'center' not in st.session_state:
     st.session_state['center'] = [-23.588609, -46.681847]
 if 'zoom' not in st.session_state:

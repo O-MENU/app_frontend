@@ -1,6 +1,9 @@
 import streamlit as st
 import requests
 
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 dados = requests.get('http://127.0.0.1:5000/usuarios/1')
 if dados.status_code == 200:
     dados = dados.json()
