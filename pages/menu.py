@@ -2,7 +2,8 @@ import streamlit as st
 from streamlit_folium import st_folium
 from streamlit_geolocation import streamlit_geolocation
 import folium
-import requests
+import requests, asyncio
+from utils import get_geolocation
 
 if 'center' not in st.session_state:
     st.session_state['center'] = [-23.588609, -46.681847]
@@ -17,7 +18,8 @@ with st.form('get_loc'):
     cidade = st.text_input('Cidade')
     sub = st.form_submit_button('Buscar')
 
-loc = streamlit_geolocation()
+asyncio.run(get_geolocation())
+#loc = streamlit_geolocation()
 if sub:
     st.session_state['buscando_loc'] = True
     st.session_state['center'] = requests.get(f'http://127.0.0.1:5000/get_loc/{end} {cidade} {cep}').json()['resp']
