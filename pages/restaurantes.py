@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import requests
 
+url = "localhost"
+
 try:
-    response = requests.get('http://127.0.0.1:5000/restaurantes')
+    response = requests.get(f'{url}/restaurantes')
     data = response.json()['restaurantes']
 except Exception as e:
     st.error(f"Error fetching data: {str(e)}")
@@ -42,7 +44,7 @@ if not filtered_data.empty:
                 st.experimental_rerun()
             if col2.button(f"Apagar", key=f"delete_{row['_id']}"):
                 try:
-                    delete_response = requests.delete(f"http://127.0.0.1:5000/restaurantes/{row['_id']}")
+                    delete_response = requests.delete(f"{url}/restaurantes/{row['_id']}")
                     if delete_response.status_code == 200:
                         st.success("Restaurante removido com sucesso")
                         st.experimental_rerun()
