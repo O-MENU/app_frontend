@@ -2,6 +2,9 @@ import streamlit as st
 import requests
 from streamlit_star_rating import st_star_rating
 
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 if "id" in st.session_state:
     dados = requests.get(f'http://127.0.0.1:5000/restaurantes/{st.session_state.id}')
     if dados.status_code == 200:
