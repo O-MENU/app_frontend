@@ -5,7 +5,7 @@ import folium
 import requests, asyncio
 from st_pages import hide_pages
 import time
-from utils import get_location, location
+from utils import get_location, rest_locs
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -32,13 +32,33 @@ if col2.button('Buscar'):
 
 m = folium.Map(location=st.session_state['center'], zoom_start=st.session_state['zoom'])
 
+fg = folium.FeatureGroup(name='Restaurantes')
+
 folium.Marker(
     st.session_state['center'],
-    popup='Liberty Bell',
-    tooltip='Liberty Bell'
+    popup='Sua Localização',
+    tooltip='Sua Localização'
 ).add_to(m)
 
-st_data = st_folium(m, width=725)
+restaurantes = rest_locs(requests.get(f'http://127.0.0.1:5000/restaurantes').json()['restaurantes'])
+
+for rest in restaurantes:
+    pop = folium.Popup(f'<p>{rest["nome"]}, {rest["nota"]} &#x2605 </p>')
+    fg.add_child(
+        folium.Marker(
+            location=[rest['localizacao']['geoloc']['lat'], rest['localizacao']['geoloc']['lng']],
+            popup=pop,
+            tooltip=f'{rest["nome"]}, {rest["nota"]}'
+        )
+    )
+
+st_data = st_folium(
+    m,
+    feature_group_to_add=fg,
+    center=st.session_state['center'],
+    width=850,
+    height=500,
+)
 
 if not st.session_state.loc_atual:
     with st.expander("Localização manual"):
@@ -49,7 +69,10 @@ if not st.session_state.loc_atual:
             sub = st.form_submit_button('Buscar')
 
     if sub:
-        loc = requests.get(f'localhost/get_loc/{end} {cidade} {cep}').json()['resp']
+        l = f'{end} {cidade} {cep}'.strip()
+        loc = requests.get(f'http://127.0.0.1:5000/get_loc/{l}').json()['resp']
+        st.session_state['center'] = loc
+        st.rerun()
 
 col1, col2 = st.columns([1, 0.25])
 

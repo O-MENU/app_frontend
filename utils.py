@@ -17,3 +17,6 @@ async def get_location():
     if loc is not None:
         st.session_state.loc_atual = True
         st.session_state.center = (loc['coords']['latitude'], loc['coords']['longitude'])
+
+def rest_locs(dic):
+    return [{'localizacao' : rest['localizacao'], 'nome' : rest['nome'], 'nota' : rest['nota']} for rest in dic]
