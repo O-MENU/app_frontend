@@ -19,4 +19,4 @@ async def get_location():
         st.session_state.center = (loc['coords']['latitude'], loc['coords']['longitude'])
 
 def rest_locs(dic):
-    return [{'localizacao' : rest['localizacao'], 'nome' : rest['nome'], 'nota' : rest['nota']} for rest in dic]
+    return [{'localizacao': rest['localizacao'], 'nome' : rest['nome'], 'nota' : rest['nota']} for rest in dic]

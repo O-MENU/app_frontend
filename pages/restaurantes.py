@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 
-url = "localhost"
+url = "http://127.0.0.1:5000"
 
 try:
     response = requests.get(f'{url}/restaurantes')
@@ -17,8 +17,7 @@ col1, col2 = st.columns([3, 1])
 col1.title("Restaurantes")
 
 if col2.button("Adicionar novo"):
-    st.session_state['page'] = 'new_restaurant'
-    st.experimental_rerun()
+    st.switch_page("pages/novo_restaurante.py")
 
 st.subheader("Filtrar por:")
 options = ["Nome", "Localização", "CNPJ", "Menu"]
@@ -45,7 +44,7 @@ if not filtered_data.empty:
             if col2.button(f"Apagar", key=f"delete_{row['_id']}"):
                 try:
                     delete_response = requests.delete(f"{url}/restaurantes/{row['_id']}")
-                    if delete_response.status_code == 200:
+                    if delete_response.status_code == 201:
                         st.success("Restaurante removido com sucesso")
                         st.experimental_rerun()
                     else:
