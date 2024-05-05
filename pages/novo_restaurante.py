@@ -12,7 +12,7 @@ cnpj = st.text_input("CNPJ")
 menu = st.text_input("Menu")
 genero = st.radio(
 "Gênero: ", 
-["Arabe", "Mexicana", "Japonesa"],
+["Arabe", "Mexicana", "Japonesa", "Nenhum destes"],
 index=None,
 )
 
