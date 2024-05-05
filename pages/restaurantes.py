@@ -38,9 +38,8 @@ if not filtered_data.empty:
         for idx, row in filtered_data.iterrows():
             col1, col2 = st.columns([1, 1], gap="small")
             if col1.button(f"Editar", key=f"edit_{row['_id']}"):
-                st.session_state['edit_id'] = row['_id']
-                st.session_state['page'] = 'edit_restaurant'
-                st.experimental_rerun()
+                st.session_state.id = row['_id']
+                st.switch_page("pages/editar_restaurante.py")
             if col2.button(f"Apagar", key=f"delete_{row['_id']}"):
                 try:
                     delete_response = requests.delete(f"{url}/restaurantes/{row['_id']}")
