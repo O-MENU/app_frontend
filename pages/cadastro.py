@@ -4,6 +4,9 @@ import requests
 from urlback import URL
 from datetime import datetime
 
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 val_email, nex_email = False, False
 
 users = requests.get(f"{URL}/usuarios").json()['usuarios']
@@ -33,3 +36,9 @@ if c1.button('Cadastrar', disabled=vld_cadastro):
     
 if c3.button('Continuar sem cadastrar'):
     st.switch_page('pages/menu.py')
+
+st.write("")
+st.write("")
+st.write("")
+if st.button("Quero cadastrar meu restaurante!"):
+    st.switch_page('pages/cadastro_restaurante.py')
