@@ -46,6 +46,7 @@ if 'user' in st.session_state:
     st.subheader('Comida favorita:')
     for item in dados['usuario']['comida_fav']:
         st.write(f"Nome: {item}")
-    st.selectbox("Adicionar outro")
+    options = ['?']
+    st.selectbox("Adicionar outro", options=options)
 else:
     st.switch_page("pages/menu.py")

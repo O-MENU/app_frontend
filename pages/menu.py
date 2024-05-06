@@ -53,7 +53,6 @@ folium.Marker(
     icon=pessoa,
 ).add_to(m)
 
-
 for rest in restaurantes:
     if rest["nota"] == []:
         txt = "n/a"
