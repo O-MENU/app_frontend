@@ -56,6 +56,17 @@ if "id" in st.session_state:
         st.subheader('Localização:')
         st.write(resposta['restaurante']['localizacao']['endereco'])
 
+        st.subheader('Categoria:')
+        for index, item in enumerate(resposta['restaurante']['categorias']):
+            st.write(item)
+            if st.button('Favoritar categoria', key=f'favoritar_categoria_{index}'):
+                response = requests.put(f'{URL}/usuarios/{st.session_state.user}/comidas', json=[item])
+                if response.status_code == 200:
+                    st.success('Categoria favoritada com sucesso!')
+                else:
+                    st.error(f'Erro ao favoritar categoria {item}: {response.text}')
+
+
         st.subheader('Contato:')
         st.write(resposta['restaurante']['email'])
 
