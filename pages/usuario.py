@@ -1,18 +1,10 @@
 import streamlit as st
 import requests
-from urlback import URL
-from time import sleep
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
-if 'user' not in st.session_state:
-    st.error('Por favor, faça o login para acessar esta página.')
-    sleep(3)
-    st.switch_page('pages/Login.py')
-
-
-dados = requests.get(f'{URL}/usuarios/{st.session_state.user}')
+dados = requests.get('http://127.0.0.1:5000/usuarios/1')
 if dados.status_code == 200:
     dados = dados.json()
     col1, col2, col3 = st.columns([1, 0.3, 1])
@@ -22,7 +14,7 @@ if dados.status_code == 200:
 
     with col3:
         if st.button('Seguir'):
-            seguir = requests.put(f'{URL}/usuarios/{st.session_state.user}')
+            seguir = requests.put('http://127.0.0.1:5000/usuarios/2/1')
             if seguir.status_code == 200:
                 st.success('Seguindo com sucesso!')
             else:
