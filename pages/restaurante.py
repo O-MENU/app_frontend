@@ -60,18 +60,18 @@ if "id" in st.session_state:
 
         c = st.expander(label='Avalie a gente!')
         with c:
-            st.session_state.stars = st_star_rating("Avalie a gente", maxValue=5, defaultValue=0, key="rating")
+            stars = st_star_rating("Avalie a gente", maxValue=5, defaultValue=0, key="rating")
             mot = ['serviço', 'bebidas', 'infraestrutura', 'tempo', 'ambiente', 'tempero', 'comida']
             selected_motivos = {}
             st.subheader('Pontos fortes!')
             for motivo in mot:
                 selected_motivos[motivo] = st.checkbox(motivo, key=motivo)
-            st.session_state.comentario = st.text_area(label='Comentários', placeholder='Lugar agradável...')
-            if st.button('Enviar Avaliação', key='submit_rating', disabled=not st.session_state.stars):
+            comentario = st.text_area(label='Comentários', placeholder='Lugar agradável...')
+            if st.button('Enviar Avaliação', key='submit_rating', disabled=not stars):
                 av = {
-                    'nota': st.session_state.stars,
+                    'nota': stars,
                     'pontos_fortes': [motivo for motivo in selected_motivos if selected_motivos[motivo]],
-                    'comentario': st.session_state.comentario
+                    'comentario': comentario
                 }
                 avaliacao = requests.post(f'{URL}/avaliacoes/usuarios/{st.session_state.user}/restaurantes/{st.session_state.id}', json=av)
                 if avaliacao.status_code == 201 or avaliacao.status_code == 200 or avaliacao.status_code == 204 or avaliacao.status_code == 202 or avaliacao.status_code == 203:
