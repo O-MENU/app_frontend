@@ -1,15 +1,14 @@
 import streamlit as st
 import pandas as pd
 import requests
+from urlback import URL
 
-url = "URL AQUI"
-
-
+update, delete = False, False
 
 try:
-    users = requests.get(url).json()
+    users = requests.get(f"{URL}/usuarios").json()['usuarios']
 except:
-    #st.error("Erro na requisição dos usuários") # <--- !!!!!   DESCOMENTAR AO OBTER URL   !!!!!
+    st.error("Erro na requisição dos usuários") # <--- !!!!!   DESCOMENTAR AO OBTER URL   !!!!!
     users = []
 
     # V  Header  V
@@ -19,8 +18,7 @@ with col2:
     st.write("")
     st.write("")
     if st.button("Adicionar novo"):
-        # Link para a página de post
-        pass
+        st.switch_page("pages/cadastro.py")
 
 # V  Definir filtros pelo usuário  V
 st.write("")
@@ -34,53 +32,35 @@ id_inicial = 0 # Index da opção inicial
 # V  Filtro  V
 filtro = st.radio("filtros", op_filtro, index=id_inicial, label_visibility="collapsed")
 txt_filtro = st.text_input("txt filtro", placeholder=f"Filtrando por {filtro}", label_visibility="collapsed")
+if filtro == "ID" and txt_filtro:
+    txt_filtro = int(txt_filtro)
 
-df_users = pd.DataFrame(users) # DataFrame de usuários
-filtered_df_users = [col for col in df_users if col[db_op_filtro[op_filtro.index(filtro)]] == txt_filtro or not filtro] # Filtra o DataFrame de acordo com o filtro passado
+filtered_users = [user for user in users if user[db_op_filtro[op_filtro.index(filtro)]] == txt_filtro or not txt_filtro] # Filtra o DataFrame de acordo com o filtro passado
 
 st.write("")
 st.write("")
 
     # V   exibir dataframe com botoes   V
+df_filtrado = pd.DataFrame(filtered_users).set_index("_id").reindex(columns=["nome", "email", "rest_fav", "seguidores", "seguindo", "localizacao", "data", "senha"])
+st.dataframe(df_filtrado)
 
-if len(filtered_df_users) > 0:
-    format_cols = (0.5,1,2,1,2,1,1) # Tamanho de cada coluna + botao de editar + botao de apagar
-    cols = st.columns(format_cols)
+if len(filtered_users) == 1:
+    _,c1,c2,_ = st.columns((1,1,0.9,1))
+    update = c1.button('Atualizar')
+    delete = c2.button('Apagar')
 
-    fields = ["ID", "Nome", "E-mail", "Data", "Senha", "Editar", "Apagar"] # Colunas + botao de editar + botao de apagar
+if update:  # Lógica do botão de editar
+    st.session_state.user_id = id
+    st.switch_page('edita usuario')
 
-    for col, field_name in zip(cols, fields): # Escreve o título da coluna
-        col.write(field_name)
-
-    for i, id in enumerate(filtered_df_users["_id"]):
-        col1, col2, col3, col4, col5, col6, col7 = st.columns(format_cols) # Número de fields
-
-        col1.write(str(id))#                        }
-        col2.write(filtered_df_users["nome"][i])#    }
-        col3.write(filtered_df_users["email"][i])#    }   Colunas do DataFrame
-        col4.write(filtered_df_users["data"][i])#    }
-        col5.write(filtered_df_users["senha"][i])#    }
-
-        button1_phold = col6.empty() #                           }
-        update = button1_phold.button("Editar", key=f"{i}b")#     }  Botão de editar
-
-        button2_phold = col7.empty()#                            } 
-        delete = button2_phold.button("Apagar", key=f"{i}c")#     }  Botão de deletar
-
-        if update:  # Lógica do botão de editar
-            st.session_state.user_id = id
-            st.switch_page('edita usuario')
-
-        if delete:  # Lógica do botão de deletar
-            try:
-                # requests.delete(f"{url}/{id}")
-                pass
-            except:
-                st.error("Erro ao apagar usuário")
-            else:
-                st.success("Usuário removido com sucesso")
-else:
-    st.warning("Nenhum usuário encontrado com estes filtros")
+if delete:  # Lógica do botão de deletar
+    try:
+        requests.delete(f"{URL}/usuarios/{id}")
+        pass
+    except:
+        st.error("Erro ao apagar usuário")
+    else:
+        st.success("Usuário removido com sucesso")
 
 
 

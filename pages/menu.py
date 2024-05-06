@@ -6,12 +6,21 @@ import requests, asyncio
 from st_pages import hide_pages
 import time
 from utils import get_location, rest_locs
+from urlback import URL
+from streamlit_searchbox import st_searchbox
+from used_func import find_dist, login_necessario
+from streamlit_modal import Modal
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
+restaurantes = requests.get(f'{URL}/restaurantes').json()['restaurantes']
+
+def buscar_restaurante(termo: str) -> list[any]:
+    return [restaurante['nome'] for restaurante in restaurantes if termo.lower() in restaurante['nome'].lower()] if termo else []
 
 if 'center' not in st.session_state:
     st.session_state['center'] = [-23.588609, -46.681847]
@@ -19,6 +28,8 @@ if 'zoom' not in st.session_state:
     st.session_state['zoom'] = 16
 if 'loc_atual' not in st.session_state:
     st.session_state['loc_atual'] = False
+if 'rests_id' not in st.session_state:
+    st.session_state.rests_id = 10
 
 col1, col2, col3 = st.columns((1,0.3,1))
 col2.title('MENU')
@@ -26,9 +37,14 @@ col2.title('MENU')
 asyncio.run(get_location())
 
 col1, col2 = st.columns((1,0.15))
-st.session_state.id = col1.text_input('id', label_visibility="collapsed", placeholder="Buscar restaurante pelo id")
+with col1:
+    busca_rest = st_searchbox(buscar_restaurante, key="busca_restaurante", placeholder="Buscar restaurante...")
+if busca_rest:
+    st.session_state.id = [rest['_id'] for rest in restaurantes if rest['nome'] == busca_rest][0]
 if col2.button('Buscar'):
     st.switch_page('pages/restaurante.py')
+
+pessoa = folium.Icon(icon='fa-sharp fa-solid fa-person', color="darkblue")
 
 m = folium.Map(location=st.session_state['center'], zoom_start=st.session_state['zoom'])
 
@@ -37,18 +53,23 @@ fg = folium.FeatureGroup(name='Restaurantes')
 folium.Marker(
     st.session_state['center'],
     popup='Sua Localização',
-    tooltip='Sua Localização'
+    tooltip='Sua Localização',
+    icon=pessoa,
 ).add_to(m)
 
-restaurantes = rest_locs(requests.get(f'http://127.0.0.1:5000/restaurantes').json()['restaurantes'])
 
 for rest in restaurantes:
+    if rest["nota"] == []:
+        txt = "n/a"
+    else:
+        txt = '★' * int(rest["nota"])
+
     pop = folium.Popup(f'<p>{rest["nome"]}, {rest["nota"]} &#x2605 </p>')
     fg.add_child(
         folium.Marker(
             location=[rest['localizacao']['geoloc']['lat'], rest['localizacao']['geoloc']['lng']],
             popup=pop,
-            tooltip=f'{rest["nome"]}, {rest["nota"]}'
+            tooltip=f'{rest["nome"]}, {txt}',
         )
     )
 
@@ -57,7 +78,7 @@ st_data = st_folium(
     feature_group_to_add=fg,
     center=st.session_state['center'],
     width=850,
-    height=500,
+    height=650,
 )
 
 if not st.session_state.loc_atual:
@@ -70,16 +91,41 @@ if not st.session_state.loc_atual:
 
     if sub:
         l = f'{end} {cidade} {cep}'.strip()
-        loc = requests.get(f'http://127.0.0.1:5000/get_loc/{l}').json()['resp']
+        loc = requests.get(f'{URL}/get_loc/{l}').json()['resp']
         st.session_state['center'] = loc
         st.rerun()
 
-col1, col2 = st.columns([1, 0.25])
+c1,c2,c3,c4 = st.columns((0.5,1,0.4,0.1))
+c2.subheader("RESTAURANTES PRÓXIMOS")
+if c4.button("Y"):
+    pass
 
-with col1:
-    if st.button('Usuário'):
-        st.switch_page('pages/usuarios.py')
+st.write("")
+st.write("")
 
-with col2:
-    if st.button('Restaurantes'):
-        st.switch_page('pages/restaurantes.py')
+def ordem(rest):
+    return find_dist(tuple(rest['localizacao']['geoloc'].values()), st.session_state.center)
+
+restaurantes.sort(key=ordem)
+a = find_dist([tuple(rest['localizacao']['geoloc'].values()) for rest in restaurantes][0], st.session_state.center)
+
+
+for rest in restaurantes[0:st.session_state.rests_id]:
+    if rest["nota"] == []:
+        txt = "n/a"
+    else:
+        txt = '★' * int(rest["nota"])
+    espaco = r"$\hspace{1cm}$"
+
+    if st.button(f"{rest['nome']}{espaco}{rest['categorias'][0]}{espaco}{txt}{espaco}{rest['localizacao']['endereco']}", use_container_width=True):
+        st.session_state.id = rest['_id']
+        st.switch_page('pages/restaurante.py')
+    
+st.write("")
+st.write("")
+c1,c2,c3 = st.columns((2,1,2))
+if c2.button("Exibir mais..."):
+    st.session_state.rests_id += 10
+    st.rerun()
+
+
