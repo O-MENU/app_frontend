@@ -20,3 +20,8 @@ async def get_location():
 
 def rest_locs(dic):
     return [{'localizacao': rest['localizacao'], 'nome' : rest['nome'], 'nota' : rest['nota']} for rest in dic]
+
+def header():
+    _,c2,_,c4 = st.columns((1,0.5,0.8,0.2))
+    c2.title('MENU')
+    c4.button('A')

@@ -26,6 +26,7 @@ def login_necessario(bool):
                 if c1.button('Entrar', disabled=vld):
                     if len(users) > 0:
                         st.session_state.user = users[0]['_id']
+                        modal.close()
                     else:
                         st.error('Usuário não encontrado',)
                 if c3.button('Cadastrar-se'):
@@ -33,4 +34,18 @@ def login_necessario(bool):
                     st.switch_page('pages/cadastro.py')
         return False
     else:
-        return True
+        if bool:
+            return True
+    
+def header(profile= True):
+    _,c2,_,c4 = st.columns((1,0.5,0.8,0.2))
+    c2.title('MENU')
+
+    if profile:
+        c4.write("")
+        c4.write("")
+        icon = '👤'
+        profile = c4.button(icon)
+        if login_necessario(profile):
+            st.switch_page('pages/perfil.py')
+        

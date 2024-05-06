@@ -8,8 +8,10 @@ import time
 from utils import get_location, rest_locs
 from urlback import URL
 from streamlit_searchbox import st_searchbox
-from used_func import find_dist, login_necessario
+from used_func import find_dist, login_necessario, header
 from streamlit_modal import Modal
+
+
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -31,8 +33,7 @@ if 'loc_atual' not in st.session_state:
 if 'rests_id' not in st.session_state:
     st.session_state.rests_id = 10
 
-col1, col2, col3 = st.columns((1,0.3,1))
-col2.title('MENU')
+header()
 
 asyncio.run(get_location())
 
