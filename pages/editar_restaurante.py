@@ -1,9 +1,10 @@
 import streamlit as st
 import requests
+from urlback import URL
 
 st.title("Editar restaurante:")
 if "id" in st.session_state:
-    dados = requests.get(f'http://127.0.0.1:5000/restaurantes/{st.session_state.id}')
+    dados = requests.get(f'{URL}/restaurantes/{st.session_state.id}')
     if dados.status_code == 200:
         resposta = dados.json()
 
@@ -29,7 +30,7 @@ if "id" in st.session_state:
                 "cnpj": cnpj,
                 "senha": senha,
             }
-            response = requests.put(f'http://127.0.0.1:5000/restaurantes/{st.session_state.id}', json=dados_atualizados)
+            response = requests.put(f'{URL}/restaurantes/{st.session_state.id}', json=dados_atualizados)
             if response.status_code == 200:
                 st.success("Restaurante atualizado com sucesso!")
             else:
