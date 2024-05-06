@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 import requests
+from urlback import URL
 
-url = "http://127.0.0.1:5000"
+url = URL
 
 try:
     response = requests.get(f'{url}/restaurantes')
@@ -20,10 +21,10 @@ if col2.button("Adicionar novo"):
     st.switch_page("pages/novo_restaurante.py")
 
 st.subheader("Filtrar por:")
-options = ["Nome", "Localização", "CNPJ", "Menu"]
+options = ["Nome", "Endereço", "CNPJ", "Menu"]
 db_options = ["nome", "localizacao", "cnpj", "cardapio"]
 
-selected_filter = st.selectbox("Escolha o filtro", options)
+selected_filter = st.radio("Escolha o filtro", options)
 filter_input = st.text_input("Valor do filtro", "")
 
 if filter_input:
