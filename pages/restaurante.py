@@ -44,7 +44,7 @@ if "id" in st.session_state:
             for item in resposta['restaurante']['cardapio']:
                 st.write(f"Prato: {item['nome_prato']}")
                 st.write(f"Descrição: {item['descricao']}")
-                st.write(f"Preço: R${item['preco']:0.2f}")
+                st.write(f"Preço: R${item['preco']}")
                 if item['foto_prato']: 
                     st.image(item['foto_prato'], caption=item['nome_prato'], width=300)
 
@@ -64,13 +64,14 @@ if "id" in st.session_state:
             for motivo in mot:
                 selected_motivos[motivo] = st.checkbox(motivo, key=motivo)
             st.session_state.comentario = st.text_area(label='Comentários', placeholder='Lugar agradável...')
+            print(st.session_state.stars)
             if st.button('Enviar Avaliação', key='submit_rating', disabled=not st.session_state.stars):
                 av = {
                     'nota': st.session_state.stars,
                     'pontos_fortes': [motivo for motivo in selected_motivos if selected_motivos[motivo]],
                     'comentario': st.session_state.comentario
                 }
-                avaliacao = requests.post(f'{URL}/avaliacoes/usuarios/1/restaurantes/6', json=av)
+                avaliacao = requests.post(f'{URL}/avaliacoes/usuarios/{st.session_state.user}/restaurantes/{st.session_state.id}', json=av)
                 if avaliacao.status_code == 201 or avaliacao.status_code == 200 or avaliacao.status_code == 204 or avaliacao.status_code == 202 or avaliacao.status_code == 203:
                     st.success('Avaliação enviada com sucesso!')
                 else:

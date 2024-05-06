@@ -2,7 +2,7 @@ import streamlit as st
 from validations import validate_email
 import requests
 from urlback import URL
-from datetime import datetime
+from datetime import datetime, date
 
 val_email, nex_email = False, False
 
@@ -21,13 +21,22 @@ if email:
     if not nex_email:
         st.error("E-mail já está sendo utiilizado")
 
-senha = st.text_input('Senha:', type='password')
+data_nascimento = st.date_input('Data de Nascimento', min_value=date(1900, 1, 1))
 
-vld_cadastro = not(nome and val_email and nex_email and senha)
+senha = st.text_input('Senha:', type='password')
+conf_senha = st.text_input('Confirme sua senha:', type='password')
+
+val_senha = (senha == conf_senha)
+
+vld_cadastro = not(nome and val_email and nex_email and val_senha)
 
 c1,_,c3 = st.columns((0.4,1,0.6))
 if c1.button('Cadastrar', disabled=vld_cadastro):
-    requests.post(f"{URL}/usuarios", json={'nome': nome, 'email': email, 'senha':senha, 'data':datetime.today().strftime('%Y-%m-%d')})
+    json={'nome': nome, 'email': email, 'senha': senha, 'data': data_nascimento.strftime('%Y-%m-%d')}
+    json
+    post = requests.post(f"{URL}/usuarios", json=json)
+    post.status_code
+    [user['_id'] for user in requests.get(f"{URL}/usuarios").json()['usuarios'] if user['email'] == email]
     st.session_state.user = [user['_id'] for user in requests.get(f"{URL}/usuarios").json()['usuarios'] if user['email'] == email][0]
     st.switch_page('pages/menu.py')
     
