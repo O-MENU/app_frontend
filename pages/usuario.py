@@ -19,24 +19,26 @@ if 'user_access' in st.session_state:
 
         with col1:
             st.title(dados['usuario']['nome'])
+        
+        if 'user_type' in st.session_state:
+            if st.session_state.user_type == 'person':
+                with col3:
+                    st.write("")
+                    st.write("")
+                    if 'user' in st.session_state:
+                        botao = 'Seguir' if st.session_state.user not in [seguidor['_id'] for seguidor in dados['usuario']['seguidores']] else 'Seguindo'
+                        hover = '' if st.session_state.user not in [seguidor['_id'] for seguidor in dados['usuario']['seguidores']] else 'Deixar de seguir'
+                    else:
+                        botao = 'seguir'
+                        hover = ''
 
-        with col3:
-            st.write("")
-            st.write("")
-            if 'user' in st.session_state:
-                botao = 'Seguir' if st.session_state.user not in [seguidor['_id'] for seguidor in dados['usuario']['seguidores']] else 'Seguindo'
-                hover = '' if st.session_state.user not in [seguidor['_id'] for seguidor in dados['usuario']['seguidores']] else 'Deixar de seguir'
-            else:
-                botao = 'seguir'
-                hover = ''
-
-            profile = st.button(botao, help=hover)
-            if login_necessario(profile):
-                seguir = requests.put(f'{URL}/usuarios/{st.session_state.user}/{st.session_state.user_access}')
-                if seguir.status_code == 200:
-                    st.rerun()
-                else:
-                    st.error('Você já segue este usuário!')
+                    profile = st.button(botao, help=hover)
+                    if login_necessario(profile):
+                        seguir = requests.put(f'{URL}/usuarios/{st.session_state.user}/{st.session_state.user_access}')
+                        if seguir.status_code == 200:
+                            st.rerun()
+                        else:
+                            st.error('Você já segue este usuário!')
 
         row1, row2 = st.columns([1, 1])
         with row1:
