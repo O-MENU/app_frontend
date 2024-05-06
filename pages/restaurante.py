@@ -73,7 +73,7 @@ if "id" in st.session_state:
                     'pontos_fortes': [motivo for motivo in selected_motivos if selected_motivos[motivo]],
                     'comentario': st.session_state.comentario
                 }
-                avaliacao = requests.post(f'{URL}/avaliacoes/usuarios/1/restaurantes/6', json=av)
+                avaliacao = requests.post(f'{URL}/avaliacoes/usuarios/{st.session_state.user}/restaurantes/{st.session_state.id}', json=av)
                 if avaliacao.status_code == 201 or avaliacao.status_code == 200 or avaliacao.status_code == 204 or avaliacao.status_code == 202 or avaliacao.status_code == 203:
                     st.success('Avaliação enviada com sucesso!')
                 else:

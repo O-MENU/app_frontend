@@ -5,6 +5,12 @@ from urlback import URL
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
+if 'user_access' in st.session_state:
+    if st.session_state.user != st.session_state.user_access:
+        st.switch_page('pages/usuario.py')
+if 'user_type' == 'restaurant':
+    st.switch_page("page/menu.py")
+
 if 'user' in st.session_state:
     dados = requests.get(f'{URL}/usuarios/{st.session_state.user}').json()
 

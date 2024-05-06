@@ -3,6 +3,7 @@ from validations import validate_email
 import requests
 from urlback import URL
 from datetime import datetime
+import time
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -28,9 +29,11 @@ senha = st.text_input('Senha:', type='password')
 
 vld_cadastro = not(nome and val_email and nex_email and senha)
 
+st.write(requests.get(f"{URL}/usuarios").json()['usuarios'])
+
 c1,_,c3 = st.columns((0.4,1,0.6))
 if c1.button('Cadastrar', disabled=vld_cadastro):
-    requests.post(f"{URL}/usuarios", json={'nome': nome, 'email': email, 'senha':senha, 'data':datetime.today().strftime('%Y-%m-%d')})
+    x = requests.post(f"{URL}/usuarios", json={'nome': nome, 'email': email, 'senha':senha, 'data':datetime.today().strftime('%Y-%m-%d')})
     st.session_state.user = [user['_id'] for user in requests.get(f"{URL}/usuarios").json()['usuarios'] if user['email'] == email][0]
     st.switch_page('pages/menu.py')
     

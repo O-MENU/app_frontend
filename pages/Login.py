@@ -19,7 +19,7 @@ if email and senha:
     users = [user for user in requests.get(f"{URL}/usuarios").json()['usuarios'] if email == user['email'] and senha == user['senha']]
     rests = [rest for rest in requests.get(f"{URL}/restaurantes").json()['restaurantes'] if email == rest['email'] and senha == rest['senha']]
 
-login, login_type = (users[0], 'person') if len(users) > 0 else (rests[0], 'restaurant') if len(rests) > 0 else False, ''
+login, login_type = (users[0], 'person') if len(users) > 0 else (rests[0], 'restaurant') if len(rests) > 0 else (False, '')
 
 vld = not(email and senha)
 
