@@ -44,7 +44,10 @@ if "id" in st.session_state:
             for item in resposta['restaurante']['cardapio']:
                 st.write(f"Prato: {item['nome_prato']}")
                 st.write(f"Descrição: {item['descricao']}")
-                st.write(f"Preço: R${item['preco']:0.2f}")
+                if type(item['preco']) in (int, float): 
+                    st.write(f"Preço: R${item['preco']:0.2f}")
+                else:
+                    st.write(f"Preço: R${item['preco']}")
                 if item['foto_prato']: 
                     st.image(item['foto_prato'], caption=item['nome_prato'], width=300)
 

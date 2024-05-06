@@ -11,11 +11,6 @@ from streamlit_searchbox import st_searchbox
 from used_func import find_dist, login_necessario, header
 from streamlit_modal import Modal
 
-
-
-with open( "font.css" ) as css:
-    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
-
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 

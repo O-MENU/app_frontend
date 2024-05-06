@@ -2,25 +2,26 @@ import streamlit as st
 import pandas as pd
 import requests
 import json
+from urlback import URL
 
-st.title("Adicionar novo restaurante:")
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
+st.title("Cadastrar restaurante")
+st.write("")
+st.write("")
+st.write("")
 
 nome = st.text_input("Nome: ")
 email = st.text_input("Email: ")
 localizacao = st.text_input("Localização: ")
 cnpj = st.text_input("CNPJ")
-<<<<<<< HEAD
 menu = st.text_input("Menu")
-genero = st.radio(
-"Gênero: ", 
-["Arabe", "Mexicana", "Japonesa", "Nenhum destes"],
-index=None,
+categorias = st.multiselect(
+"Categorias: ", 
+["Arabe", "Mexicana", "Japonesa", "Brasileira", "Pf", "Hambúrguer", "Hot-dog", "Chinesa", "Italiana", "Saudável", "Fast-food", "Outro(s)"],
 )
-=======
 senha = st.text_input("Senha:", type="password")
-categorias = st.text_input("Categorias:")
->>>>>>> 0dccccd9e6585c27328dbac1905a3b061db40108
-
 col1, col2 = st.columns([1, 0.2])  
 
 with col2:
@@ -31,11 +32,11 @@ with col2:
             "localizacao": localizacao,
             "cnpj": cnpj,
             "senha": senha,
-            "categorias": categorias,
+            "categorias": categorias.remove("Outro"),
         })
 
         headers = {'Content-Type': 'application/json'}
-        response = requests.post('http://127.0.0.1:5000/restaurantes', data=json.dumps(data), headers=headers)
+        response = requests.post(f'{URL}/restaurantes', data=json.dumps(data), headers=headers)
         
         if response.status_code == 201:
             st.success("Restaurante adicionado com sucesso!")
@@ -45,4 +46,4 @@ with col2:
 
 with col1:
     if st.button("voltar"):
-        st.switch_page('pages/restaurantes.py')
+        st.switch_page('pages/cadastro.py')

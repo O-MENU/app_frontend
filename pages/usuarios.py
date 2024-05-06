@@ -3,6 +3,9 @@ import pandas as pd
 import requests
 from urlback import URL
 
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 update, delete = False, False
 
 try:
