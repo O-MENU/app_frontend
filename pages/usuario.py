@@ -1,7 +1,9 @@
 import streamlit as st
 import requests
 from urlback import URL
-from used_func import login_necessario
+from used_func import login_necessario, header
+
+header(profile=False, search=False)
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -12,7 +14,7 @@ if 'user_access' in st.session_state:
             st.switch_page("pages/perfil.py")
 
     dados = requests.get(f'{URL}/usuarios/{st.session_state.user_access}')
-
+  
     if dados.status_code == 200:
         dados = dados.json()
         col1, col2, col3 = st.columns([1, 0.3, 1])
@@ -82,6 +84,8 @@ if 'user_access' in st.session_state:
         # st.write(dados['usuario']['localizacao']['endereco'])                           <------- Mto invasivo? sla
         # st.write(f"latitude: {dados['usuario']['localizacao']['geoloc']['lat']}")
         # st.write(f"longitude: {dados['usuario']['localizacao']['geoloc']['lng']}")
+else:
+    st.switch_page("pages/menu.py")    
 
     
 

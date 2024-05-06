@@ -1,9 +1,12 @@
 import streamlit as st
 from validations import validate_email
+from used_func import header
 import requests
 from urlback import URL
 from datetime import datetime
 import time
+
+header(profile=False, search=False)
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -12,7 +15,7 @@ val_email, nex_email = False, False
 
 users = requests.get(f"{URL}/usuarios").json()['usuarios']
 
-st.title('Cadastre-se')
+st.subheader('Cadastre-se:')
 
 nome = st.text_input('Nome', placeholder='Edgar Da silva')
 
