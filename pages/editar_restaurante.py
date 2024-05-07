@@ -1,8 +1,14 @@
 import streamlit as st
 import requests
 from urlback import URL
+from used_func import header
 
-st.title("Editar restaurante:")
+header(False, False)
+
+with open( "font.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
+st.subheader("Editar restaurante:")
 if "id" in st.session_state:
     dados = requests.get(f'{URL}/restaurantes/{st.session_state.id}')
     if dados.status_code == 200:

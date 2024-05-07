@@ -9,6 +9,7 @@ with open("font.css") as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
 
 restaurantes = requests.get(f"{URL}/restaurantes").json()['restaurantes']
+usuarios = requests.get(f"{URL}/usuarios").json()['usuarios']
 
 header(profile=False, search=False)
 
@@ -21,7 +22,7 @@ with st.form("register_form"):
         val_email = validate_email(email)
         if not val_email:
             st.error("Email inválido")
-        nex_email = email not in [restaurante['email'] for restaurante in restaurantes]
+        nex_email = email not in [user['email'] for user in restaurantes+usuarios]
         if not nex_email:
             st.error("E-mail já está sendo utiilizado")
 
@@ -55,7 +56,9 @@ if submit_button:
     response = requests.post(f'{URL}/restaurantes', data=json.dumps(data), headers=headers)
     
     if response.status_code == 201:
-        st.success("Restaurante adicionado com sucesso!")
+        st.session_state.user = [user['_id'] for user in requests.get(f'{URL}/restaurantes').json()['restaurantes'] if user['email'] == email]
+        st.session_state.user_type = "restaurant"
+        st.switch_page("pages/menu.py")
     else:
         st.error(f"Erro ao adicionar restaurante: {response.status_code}")
         st.text(f"Detalhes do erro: {response.text}")
