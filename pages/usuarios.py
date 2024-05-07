@@ -45,6 +45,16 @@ st.write("")
 
     # V   exibir dataframe com botoes   V
 df_filtrado = pd.DataFrame(filtered_users).set_index("_id").reindex(columns=["nome", "email", "rest_fav", "seguidores", "seguindo", "localizacao", "data", "senha"])
+
+
+def get_vals(val):
+    rests = [rest['nome'] for rest in val]
+    return ', '.join(rests)
+
+df_filtrado['rest_fav'] = df_filtrado['rest_fav'].apply(get_vals)
+df_filtrado['seguidores'] = df_filtrado['seguidores'].apply(get_vals)
+df_filtrado['seguindo'] = df_filtrado['seguindo'].apply(get_vals)
+
 st.dataframe(df_filtrado)
 
 if len(filtered_users) == 1:
