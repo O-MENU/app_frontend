@@ -3,6 +3,7 @@ import requests
 from urlback import URL
 import folium
 from folium.plugins import HeatMap
+from streamlit_folium import st_folium
 
 if 'center' not in st.session_state:
     st.session_state['center'] = [-23.588609, -46.681847]
@@ -14,3 +15,5 @@ data = requests.get(f'{URL}/usuarios/loc').json() if st.session_state.heatmap[0]
 
 m = folium.Map(location=st.session_state.center, zoom_start=4)  # Coordenadas do centro dos EUA
 HeatMap(data).add_to(m)
+
+st_folium(m, width=725)
