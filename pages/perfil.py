@@ -14,6 +14,7 @@ if 'user_type' == 'restaurant':
 if 'user' in st.session_state:
     dados = requests.get(f'{URL}/usuarios/{st.session_state.user}').json()
 
+
     st.title(dados['usuario']['nome'])
 
     row1, row2 = st.columns([1, 1])
