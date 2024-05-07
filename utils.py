@@ -1,6 +1,28 @@
 from streamlit_js_eval import get_geolocation
-import asyncio
+import folium, requests, asyncio
 import streamlit as st
+from urlback import URL
+import pyperclip
+
+def on_click(event):
+    lat_user, lng_user = st.session_state['center']
+    lat_rest, lng_rest = event.values()
+
+    coords = requests.get(f'{URL}/get_rota/{lat_user},{lng_user}/{lat_rest},{lng_rest}').json()['resp']['carro_line']
+
+    return folium.vector_layers.PolyLine(
+        locations=coords,
+        color='blue',
+        weight=2,
+        popup='Rota',
+        tooltip='Rota'
+    )
+
+def handle_click(**kwargs):
+    lat = kwargs.get('lat')
+    lon = kwargs.get('lon')
+    # Copy latitude and longitude to clipboard
+    pyperclip.copy(f'Latitude: {lat}, Longitude: {lon}')
 
 def location(loc):
     st.session_state.center = (loc["latitude"], loc['longitude'])
