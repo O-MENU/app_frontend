@@ -48,9 +48,13 @@ df_filtrado = pd.DataFrame(filtered_users).set_index("_id").reindex(columns=["no
 st.dataframe(df_filtrado)
 
 if len(filtered_users) == 1:
-    _,c1,c2,_ = st.columns((1,1,0.9,1))
-    update = c1.button('Atualizar')
-    delete = c2.button('Apagar')
+    _,c1,_,c2,_,c3,_ = st.columns((0.5,1,0.5,1,0.5,1,0.5))
+    heatmap = c1.button('Heatmap')
+    update = c2.button('Atualizar')
+    delete = c3.button('Apagar')
+if len(filtered_users) > 1:
+    _,c1,_ = st.columns((1,0.5,1))
+    heatmap = c1.button('Heatmap all')
 
 if update:  # Lógica do botão de editar
     st.session_state.user_id = id
@@ -64,6 +68,10 @@ if delete:  # Lógica do botão de deletar
         st.error("Erro ao apagar usuário")
     else:
         st.success("Usuário removido com sucesso")
+
+if heatmap:
+    st.session_state.heatmap = ('all', 0) if len(filtered_users) > 1 else ('one', filtered_users[0]['_id'])
+    st.switch_page('pages/heatmap.py')
 
 
 

@@ -27,6 +27,8 @@ if 'loc_atual' not in st.session_state:
     st.session_state['loc_atual'] = False
 if 'rests_id' not in st.session_state:
     st.session_state.rests_id = 10
+if 'i' not in st.session_state:
+    st.session_state.i = 0
 
 header()
 
@@ -87,8 +89,17 @@ if not st.session_state.loc_atual:
     if sub:
         l = f'{end} {cidade} {cep}'.strip()
         loc = requests.get(f'{URL}/get_loc/{l}').json()['resp']
+        if loc != st.session_state.center:
+            pass
         st.session_state['center'] = loc
         st.rerun()
+else:
+    if st.session_state.i == 0:
+        if 'user' in st.session_state:
+            if 'user_type' in st.session_state:
+                if st.session_state.user_type == 'person':
+                    requests.put(f'{URL}/usuario/{st.session_state.user}/loc', json={'loc':tuple(st.session_state.center)})
+                    st.session_state.i += 1
 
 c1,c2,c3,c4 = st.columns((0.5,1,0.4,0.1))
 c2.subheader("RESTAURANTES PRÓXIMOS")
