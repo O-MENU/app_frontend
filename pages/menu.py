@@ -5,7 +5,7 @@ import folium
 import requests, asyncio
 from st_pages import hide_pages
 import time
-from utils import get_location, rest_locs
+from utils import get_location, rest_locs, on_click
 from urlback import URL
 from streamlit_searchbox import st_searchbox
 from used_func import find_dist, login_necessario, header
@@ -29,6 +29,9 @@ if 'rests_id' not in st.session_state:
     st.session_state.rests_id = 10
 if 'i' not in st.session_state:
     st.session_state.i = 0
+if 'rota' not in st.session_state:
+    st.session_state['rota'] = None
+
 
 header()
 
@@ -69,6 +72,9 @@ for rest in restaurantes:
             tooltip=f'{rest["nome"]}, {txt}',
         )
     )
+
+if st.session_state['rota'] != None:
+    st.session_state['rota'].add_to(m)
 
 st_data = st_folium(
     m,
@@ -123,9 +129,16 @@ for rest in restaurantes[0:st.session_state.rests_id]:
         txt = '★' * int(rest["nota"])
     espaco = r"$\hspace{1cm}$"
 
-    if st.button(f"{rest['nome']}{espaco}{rest['categorias'][0]}{espaco}{txt}{espaco}{rest['localizacao']['endereco']}", use_container_width=True):
+    c1, c2 = st.columns((2, 0.5))
+    if c1.button(f"{rest['nome']}{espaco}{rest['categorias'][0]}{espaco}{txt}{espaco}{rest['localizacao']['endereco']}", use_container_width=True):
         st.session_state.id = rest['_id']
         st.switch_page('pages/restaurante.py')
+    
+    if c2.button('Calcular Rota', use_container_width=True, key=rest['_id']):
+        loc_rest = rest['localizacao']['geoloc']
+        poly = on_click(loc_rest)
+        st.session_state['rota'] = poly
+        st.rerun()
     
 st.write("")
 st.write("")
