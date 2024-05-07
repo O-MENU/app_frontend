@@ -2,7 +2,6 @@ from streamlit_js_eval import get_geolocation
 import folium, requests, asyncio
 import streamlit as st
 from urlback import URL
-import pyperclip
 
 def on_click(event):
     lat_user, lng_user = st.session_state['center']
@@ -17,12 +16,6 @@ def on_click(event):
         popup='Rota',
         tooltip='Rota'
     )
-
-def handle_click(**kwargs):
-    lat = kwargs.get('lat')
-    lon = kwargs.get('lon')
-    # Copy latitude and longitude to clipboard
-    pyperclip.copy(f'Latitude: {lat}, Longitude: {lon}')
 
 def location(loc):
     st.session_state.center = (loc["latitude"], loc['longitude'])
