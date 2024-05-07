@@ -1,6 +1,21 @@
 from streamlit_js_eval import get_geolocation
-import asyncio
+import folium, requests, asyncio
 import streamlit as st
+from urlback import URL
+
+def on_click(event):
+    lat_user, lng_user = st.session_state['center']
+    lat_rest, lng_rest = event.values()
+
+    coords = requests.get(f'{URL}/get_rota/{lat_user},{lng_user}/{lat_rest},{lng_rest}').json()['resp']['carro_line']
+
+    return folium.vector_layers.PolyLine(
+        locations=coords,
+        color='blue',
+        weight=2,
+        popup='Rota',
+        tooltip='Rota'
+    )
 
 def location(loc):
     st.session_state.center = (loc["latitude"], loc['longitude'])
