@@ -3,9 +3,10 @@ import streamlit as st
 import requests
 from streamlit_star_rating import st_star_rating
 from urlback import URL
-from used_func import login_necessario
+from used_func import login_necessario, header
 import time
 
+header(profile=False, search=False)
 
 if 'user' in st.session_state:
     if 'user_type' in st.session_state:
