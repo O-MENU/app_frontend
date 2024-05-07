@@ -3,7 +3,7 @@ from validations import validate_email
 from used_func import header
 import requests
 from urlback import URL
-from datetime import datetime
+from datetime import datetime, date
 import time
 
 header(profile=False, search=False)
@@ -29,7 +29,7 @@ if email:
     if not nex_email:
         st.error("E-mail já está sendo utiilizado")
     
-nascimento = st.date_input("Data de nascimento", format='DD/MM/YYYY')
+nascimento = st.date_input("Data de nascimento", format='DD/MM/YYYY', min_value= date(1900, 1, 1))
 
 senha = st.text_input('Senha:', type='password')
 
