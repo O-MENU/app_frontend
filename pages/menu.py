@@ -10,6 +10,8 @@ from urlback import URL
 from streamlit_searchbox import st_searchbox
 from used_func import find_dist, login_necessario, header
 from streamlit_modal import Modal
+from streamlit_star_rating import st_star_rating
+from streamlit_pills import pills
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -107,34 +109,48 @@ else:
                     requests.put(f'{URL}/usuario/{st.session_state.user}/loc', json={'loc':tuple(st.session_state.center)})
                     st.session_state.i += 1
 
-c1,c2,c3,c4 = st.columns((0.5,1,0.4,0.1))
-c2.subheader("RESTAURANTES PRÓXIMOS")
-if c4.button("Y"):
-    pass
-
-st.write("")
-st.write("")
-
 def ordem(rest):
     return find_dist(tuple(rest['localizacao']['geoloc'].values()), st.session_state.center)
+restaurantes.sort(key=ordem)
+
+filtro = 'padrao'
+
+c1,c2,c3,c4 = st.columns((0.5,1,0.4,0.1))
+c2.subheader("RESTAURANTES PRÓXIMOS")
+with c4.popover("Y", ):
+    tp_filtro = None
+    tp_filtro = pills("Selecione um filtro...", ['Nota', "Categoria", "Distância", "Feitos pra você"], ["⭐", "🍖", "📍", "🫵"], index = None, clearable=True)
+    if tp_filtro == 'Nota':
+        filtro = st_star_rating(label="", maxValue=5, defaultValue=0, key="rating", )
+        if not filtro:
+            filtro = 'padrao'
+        else:
+            restaurantes_filtrado = [rest for rest in restaurantes if rest['nota'] >= filtro]
+    
+    if filtro == 'padrao':
+        restaurantes_filtrado = restaurantes
+
+st.write("")
+st.write("")
+
 
 restaurantes.sort(key=ordem)
 a = find_dist([tuple(rest['localizacao']['geoloc'].values()) for rest in restaurantes][0], st.session_state.center)
 
 
-for rest in restaurantes[0:st.session_state.rests_id]:
+for rest in restaurantes_filtrado[0:st.session_state.rests_id]:
     if rest["nota"] == []:
         txt = "n/a"
     else:
         txt = '★' * int(rest["nota"])
-    espaco = r"$\hspace{1cm}$"
+    espaco = r"$\hspace{0.5cm}$"
 
-    c1, c2 = st.columns((2, 0.5))
+    c1, c2 = st.columns((8, 0.5))
     if c1.button(f"{rest['nome']}{espaco}{rest['categorias'][0]}{espaco}{txt}{espaco}{rest['localizacao']['endereco']}", use_container_width=True):
         st.session_state.id = rest['_id']
         st.switch_page('pages/restaurante.py')
     
-    if c2.button('Calcular Rota', use_container_width=True, key=rest['_id']):
+    if c2.button('🧭', use_container_width=True, key=rest['_id']):
         loc_rest = rest['localizacao']['geoloc']
         poly = on_click(loc_rest)
         st.session_state['rota'] = poly
