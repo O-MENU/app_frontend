@@ -5,6 +5,8 @@ import requests
 from urlback import URL
 import time
 from streamlit_searchbox import st_searchbox
+import smtplib
+from email.message import EmailMessage
 
 def find_dist(p1, p2):
     return int(math.sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2))*10**15)
@@ -120,4 +122,15 @@ def header(profile= True, search= True):
                     else:
                         st.error("Não encontrado")
 
-        
+def enviar_email_autorizacao(endereco_novo, endereco_antigo):
+    email = EmailMessage()
+    email['From'] = 'sistema.o.garfo@gmail.com'
+    email['To'] = 'o.garfo.main@gmail.com'
+    email['Subject'] = 'Autorização de Mudança de Localização'
+    email.set_content(f'O endereço do restaurante foi alterado de {endereco_antigo} para {endereco_novo}. Por favor, verifique e autorize a mudança.')
+
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
+        smtp.login('sistema.o.garfo@gmail.com', 'fhlllm&ogarfo')
+        smtp.send_message(email)
+        print("Email enviado com sucesso!")
