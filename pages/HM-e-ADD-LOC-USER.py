@@ -13,7 +13,7 @@ locs_usuario = requests.get(f'{URL}/usuario/{id}/loc') # essa url ja passa a lis
 data = locs_usuario
 
 # todos os usuarios
-all_locs = requests.get(f'{URL}/usuarios/loc)
+all_locs = requests.get(f'{URL}/usuarios/loc')
 
 data = all_locs
 
