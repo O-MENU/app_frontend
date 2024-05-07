@@ -3,7 +3,9 @@ import requests
 from urlback import URL
 from used_func import login_necessario, header
 
-header(profile=False, search=False)
+header()
+
+espaco = r"$\hspace{2.5cm}$"
 
 with open( "font.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
@@ -17,14 +19,14 @@ if 'user_access' in st.session_state:
   
     if dados.status_code == 200:
         dados = dados.json()
-        col1, col2, col3 = st.columns([1, 0.3, 1])
-
-        with col1:
-            st.title(dados['usuario']['nome'])
+        c1,_,c2,c3 = st.columns((0.6,0.8,1,1))
+        c2.header(dados['usuario']['nome'])
+        c1.write("")
+        c1.image(dados['usuario']['foto_perfil'],width = 75)
         
         if 'user_type' in st.session_state:
             if st.session_state.user_type == 'person':
-                with col3:
+                with c3:
                     st.write("")
                     st.write("")
                     if 'user' in st.session_state:
@@ -50,12 +52,12 @@ if 'user_access' in st.session_state:
                 c = st.expander(label=f'{tamanho} seguidores:')
                 with c:
                     for seguidor in dados['usuario']['seguidores']:
-                        if st.button(f"{seguidor['nome']}", use_container_width=True, key=f"seguidor{seguidor['_id']}"):
+                        if st.button(f"{espaco}{seguidor['nome']}", use_container_width=True, key=f"seguidor{seguidor['_id']}"):
                             st.session_state.user_access = seguidor['_id']
                             st.rerun()
             else:
                 st.write("")
-                st.write('0 seguidores')
+                st.write(f'{espaco}0 seguidores')
         
 
         with row2:
@@ -65,12 +67,12 @@ if 'user_access' in st.session_state:
                 c = st.expander(label=f'{tamanho} seguindo:')
                 with c:
                     for seguindo in dados['usuario']['seguindo']:
-                        if st.button(f"{seguindo['nome']}", use_container_width=True, key=f"seguindo{seguindo['_id']}"):
+                        if st.button(f"{espaco}{seguindo['nome']}", use_container_width=True, key=f"seguindo{seguindo['_id']}"):
                             st.session_state.user_access = seguindo['_id']
                             st.rerun()
             else:
                 st.write("")
-                st.write('0 seguindo')
+                st.write(f'{espaco}0 seguindo')
 
         st.subheader('Restaurantes favoritos:')
         for item in dados['usuario']['rest_fav']:
