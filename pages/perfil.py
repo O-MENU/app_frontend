@@ -1,6 +1,9 @@
 import streamlit as st
 import requests
 from urlback import URL
+from used_func import header
+
+header()
 
 espaco = r"$\hspace{2.5cm}$"
 
@@ -13,8 +16,8 @@ if 'user_type' == 'restaurant':
 if 'user' in st.session_state:
     dados = requests.get(f'{URL}/usuarios/{st.session_state.user}').json()
 
-    c1,c2,_ = st.columns(3)
-    c2.title(dados['usuario']['nome'])
+    c1,_,c2,_ = st.columns((0.6,0.8,1,1))
+    c2.header(dados['usuario']['nome'])
     c1.write("")
     c1.image(dados['usuario']['foto_perfil'],width = 75)
 

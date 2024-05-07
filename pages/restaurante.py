@@ -17,7 +17,9 @@ if "id" in st.session_state:
         if 'user' in st.session_state:
             if 'user_type' in st.session_state:
                 if st.session_state.user_type == 'person':
-                    favoritado = resposta['restaurante']['nome'] in [rest['nome'] for rest in requests.get(f"{URL}/usuarios/{st.session_state.user}").json()['usuario']['rest_fav']]
+                    favoritado = resposta['restaurante']['_id'] in [rest['_id'] for rest in requests.get(f"{URL}/usuarios/{st.session_state.user}").json()['usuario']['rest_fav']]
+                else:
+                    st.switch_page('pages/menu.py')
 
         fav_button = r"$\LARGE \bigstar$" if favoritado else r"$\LARGE ☆$"
 
@@ -31,16 +33,12 @@ if "id" in st.session_state:
                 st.write("")
                 fav = st.button(fav_button)
                 if login_necessario(fav):
-                    if not (st.session_state.user or st.session_state.user == 0):
-                        #  tela_login() <----- descomentar quando a funcao for feita
-                        pass
+                    if favoritado:
+                        requests.delete(f'{URL}/usuarios/{st.session_state.user}/restaurante/{st.session_state.id}')
+                        st.rerun()
                     else:
-                        if favoritado:
-                            requests.delete(f'{URL}/usuarios/{st.session_state.user}/restaurante/{st.session_state.id}')
-                            st.rerun()
-                        else:
-                            requests.put(f'{URL}/usuarios/{st.session_state.user}/restaurante/{st.session_state.id}')
-                            st.rerun()
+                        requests.put(f'{URL}/usuarios/{st.session_state.user}/restaurante/{st.session_state.id}')
+                        st.rerun()
 
         with st.expander(r"$\Large MENU$"):
             for item in resposta['restaurante']['cardapio']:

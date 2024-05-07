@@ -1,6 +1,7 @@
 from streamlit_js_eval import get_geolocation
 import folium, requests, asyncio
 import streamlit as st
+import requests
 from urlback import URL
 
 def on_click(event):
@@ -32,11 +33,7 @@ async def get_location():
     if loc is not None:
         st.session_state.loc_atual = True
         st.session_state.center = (loc['coords']['latitude'], loc['coords']['longitude'])
+        
 
 def rest_locs(dic):
     return [{'localizacao': rest['localizacao'], 'nome' : rest['nome'], 'nota' : rest['nota']} for rest in dic]
-
-def header():
-    _,c2,_,c4 = st.columns((1,0.5,0.8,0.2))
-    c2.title('MENU')
-    c4.button('A')

@@ -44,11 +44,12 @@ if 'user' in st.session_state:
                 if uploaded_file is not None:
                     encoded_string = base64.b64encode(uploaded_file.read())
                     _,c,_ = st.columns((0.5,1,0.5))
-                    c.image("data:image/jpeg;base64," + str(encoded_string)[2:-1])
-                    ft = "data:image/jpeg;base64," + str(encoded_string)[2:-1]
+                    ft = str("data"+":"+"image/jpeg;base64,") + str(encoded_string)[2:-1]
+                    c.image(ft)
                 _,c,_ = st.columns((0.8,1,0.8))
                 if c.button("Adicionar item"):
                     requests.put(f"{URL}/restaurantes/{st.session_state.user}/adicionar_prato", json={"descricao": desc, "foto_prato": ft, "nome_prato": nome, "preco": preco})
+                    st.rerun()
                 
 
 
